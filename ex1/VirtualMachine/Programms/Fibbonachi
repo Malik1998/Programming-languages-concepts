@@ -1,0 +1,55 @@
+print "This is program that will help you to find n'ths Fibbonachi number"
+print "Fibbonachi: 1 1 2 3 5 ..."
+print "Please enter number: "
+in
+
+push 1
+
+push 1
+pop rcx
+
+je pr
+
+
+push 1
+pop rax
+push 1
+
+
+push 1
+pop rbx
+push 1
+
+
+for:
+add
+
+pop rcx
+
+push 1
+add
+
+
+je pr
+
+
+push rax
+pop rbx
+push rcx
+pop rax
+
+push rbx
+push rax
+
+ja for
+
+
+
+pr:
+pop rdx
+pop rdx
+push rcx
+print "The n'ths number is"
+out
+
+end

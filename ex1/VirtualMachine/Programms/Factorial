@@ -1,0 +1,54 @@
+print "This is program that will help you to find Factorial"
+print "Please enter number: "
+in
+
+push 1
+push 1
+je after_func
+
+func:
+
+pop rbx
+pop rbx
+
+push rcx
+push 1
+add
+push rdx
+multiply
+pop rdx
+
+push rcx
+push 1
+add
+pop rcx
+
+push rcx
+push rax
+ja func
+
+ret
+
+
+after_func:
+pop rax
+pop rbx
+
+pop rax
+
+push 0
+pop rcx
+
+push 1
+pop rdx
+
+push 1
+push 1
+call func
+
+pop rax
+pop rax
+push rdx
+out
+
+end
