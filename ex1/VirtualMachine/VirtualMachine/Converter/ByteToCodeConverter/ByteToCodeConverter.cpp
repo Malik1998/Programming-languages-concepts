@@ -47,6 +47,15 @@ namespace ByteToCodeConverter {
             switch (command.first) {
                 case CommandService::Command::print : {
 
+                    int length_to_read = getNumber(program + currentPosition);
+                    currentPosition += 4;
+
+                    auto pushPopString = CommandService::extractWord(program + currentPosition, length_to_read);
+                    currentPosition += length_to_read;
+
+                    myfile << " " << "\"" << pushPopString.first << "\"";
+                    break;
+
                 }
                 case CommandService::Command::pop : {
                 }

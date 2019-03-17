@@ -14,7 +14,7 @@ namespace CommandService {
         int position = 0;
         if (program[1] == '\"') {
             sscanf(program + 2, "%[^\"]\"%n", commandChar, &position);
-            position += 3;
+            position += 2;
         } else {
             sscanf(program, "%s%n", commandChar, &position);
         }

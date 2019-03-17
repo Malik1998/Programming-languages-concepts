@@ -42,7 +42,10 @@ using namespace CommandService;
 
             switch (command.first) {
                 case CommandService::Command::print : {
-
+                    auto pushPopString = CommandService::extractWord(program + currentPosition);
+                    currentPosition += pushPopString.second;
+                    myfile << " " << "\"" <<pushPopString.first << "\"";
+                    break;
                 }
                 case CommandService::Command::pop : {
                 }
@@ -136,6 +139,8 @@ using namespace CommandService;
             currentPosition += command.second;
 
             switch (command.first) {
+                case CommandService::Command::print : {
+                }
                 case CommandService::Command::pop : {
                 }
                 case CommandService::Command::push : {
