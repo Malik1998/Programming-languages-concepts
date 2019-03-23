@@ -19,8 +19,11 @@ namespace ByteToCodeConverter {
 
 
     ErrorCode convert(char* program, char* filename_ = const_cast<char *>("Code.code"), int length = 0);
-    std::map<int, int>  getLabels(char* program, int length);
+    std::map<int, int>  getLabels(char* program, int length, std::map<int, std::string> &dataVal, std::map<int, int> &dataPos);
     int getNumber(char *strin);
+
+    void writeData(std::ofstream& out, std::map<int, std::string> &dataVal, std::map<int, int> &dataPos);
+    void skipData(char* program, int& currentPosition, std::map<int, std::string> &dataVal, std::map<int, int> &dataPos);
 };
 
 

@@ -1,6 +1,6 @@
-print "This is program that will help you to find n'ths Fibbonachi number"
-print "Fibbonachi: 1 1 2 3 5 ..."
-print "Please enter number: "
+print .firstString
+print .secondString
+print .thirdString
 in
 
 push 1
@@ -49,7 +49,14 @@ pr:
 pop rdx
 pop rdx
 push rcx
-print "The n'ths number is"
+print .forthString
 out
+
+.data
+
+.firstString "This is program that will help you to find n'ths Fibbonachi number"
+.secondString "Fibbonachi: 1 1 2 3 5 ..."
+.thirdString "Please enter number: "
+.forthString "The n'ths number is"
 
 end

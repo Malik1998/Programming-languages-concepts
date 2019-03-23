@@ -15,7 +15,9 @@ namespace CodeToWordConverter {
     };
 
     ErrorCode convert(char* program, char* filename = (char *)"WordProgram.code");
-    std::map<int, int>  getLabels(char* program);
+    std::map<int, int>  getLabels(char* program, std::map<int, std::string> &dataVal);
+    void writeData(std::ofstream& out, std::map<int, std::string> &dataVal);
+    void skipData(char* program, int& currentPosition, std::map<int, std::string> &dataVal);
 
 };
 

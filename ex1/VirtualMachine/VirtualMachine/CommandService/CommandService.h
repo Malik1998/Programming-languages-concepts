@@ -14,7 +14,7 @@
 
 namespace CommandService {
 
-    static const int number_of_commands = 18;
+    static const int number_of_commands = 19;
 
     static char commandChar[MAX_LENGTH];
 
@@ -36,7 +36,8 @@ namespace CommandService {
         ret = 14,
         call = 15,
         print = 16,
-        no_such_command = 17
+        data = 17,
+        no_such_command = 18
     };
 
     enum TypeOfMemory {
@@ -66,6 +67,7 @@ namespace CommandService {
             "ret",
             "call",
             "print",
+            ".data",
             "no_such_command"
     };
 
@@ -74,6 +76,8 @@ namespace CommandService {
     std::pair<Command, int> extractCommandByte(char *in);
     std::pair<TypeOfMemory, int> getTypeOfMemory(char *in);
     std::pair<std::string, int> extractWord(char* program, int length = -1);
+    std::pair<std::string, int> extractWordByte(char* program);
+    int extractWordByte(char* program, char* str1);
 
 
 };

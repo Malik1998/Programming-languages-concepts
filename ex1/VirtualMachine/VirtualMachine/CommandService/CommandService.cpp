@@ -61,4 +61,17 @@ namespace CommandService {
             }
         }
     }
+
+    std::pair<std::string, int> extractWordByte(char* program) {
+        int position = 0;
+        sscanf(program, "%255[^\n]%n", commandChar, &position);
+        return std::make_pair(commandChar, position);
+    }
+
+
+    int extractWordByte(char* program, char* str1) {
+        int position = 0;
+        sscanf(program, "%255[^\n]%n", str1, &position);
+        return position;
+    }
 }

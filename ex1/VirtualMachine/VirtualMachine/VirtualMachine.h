@@ -8,6 +8,7 @@
 #include <iostream>
 #include "SafeStack/SafeStack.h"
 #include "CommandService/CommandService.h"
+#define MAX_LINE_SIZE 256
 
 #define SIZE_OF_STACK 100
 
@@ -23,6 +24,8 @@ private:
 
     static const int RAM_SIZE = 1024;
     int ram[RAM_SIZE];
+
+    char additionalStack[MAX_LINE_SIZE];
 
 public:
     enum TypeOfProgram {
@@ -44,8 +47,13 @@ public:
 
 private:
     void conditionalJump(int *i, CommandService::Command command);
+    void printString(int *i);
     int getNumber(char *string);
     int getNumberChar(char *string, int length);
+    void getDataPlace();
+    void skipData(int &i);
+
+    int dataPlace;
 };
 
 

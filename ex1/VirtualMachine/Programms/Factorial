@@ -1,54 +1,49 @@
-print "This is program that will help you to find Factorial"
-print "Please enter number: "
+print .1
+print .2
+
 in
-
 push 1
 push 1
-je after_func
+je 23
 
-func:
-
+6:
 pop rbx
 pop rbx
-
 push rcx
 push 1
 add
 push rdx
 multiply
 pop rdx
-
 push rcx
 push 1
 add
 pop rcx
-
 push rcx
 push rax
-ja func
-
+ja 6
 ret
 
-
-after_func:
+23:
 pop rax
 pop rbx
-
 pop rax
-
 push 0
 pop rcx
-
 push 1
 pop rdx
+push 1
+push 1
+call 6
 
-push 1
-push 1
-call func
 
 pop rax
 pop rax
 push rdx
 out
 
+
+.data
+.1 "This is program that will help you to find Factorial"
+.2 "Please enter number: "
 end

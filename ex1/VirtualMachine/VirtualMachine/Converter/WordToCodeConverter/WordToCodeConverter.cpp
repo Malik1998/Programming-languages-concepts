@@ -4,6 +4,7 @@
 
 #include <ostream>
 #include <map>
+#include <math.h>
 #include <iostream>
 #include "cstring"
 #include "WordToCodeConverter.h"
@@ -13,17 +14,23 @@
 namespace WordToCodeConverter {
     ErrorCode convert(char *program, char *filename) {
 
-        std::map<std::string, int> labels = getLabels(program);
+        std::map<std::string, int> data;
+        std::map<int, std::string> dataVal;
+        std::map<std::string, int> labels = getLabels(program, data, dataVal);
         std::ofstream myfile;
         myfile.open(filename);
         int currentPosition = 0;
-        int currentLine = 0;
+
+
         while (currentPosition != std::strlen(program)) {
             auto command = std::make_pair(CommandService::Command::no_such_command, 0);
             command = CommandService::extractCommandWord(program + currentPosition);
             if (command.first == CommandService::Command::end ||
                 command.first == CommandService::Command::no_such_command) {
                 if (command.first == CommandService::Command::end) {
+
+                    writeData(myfile, data, dataVal);
+
                     myfile << static_cast<int>(command.first);
                     myfile.close();
                     return OK;
@@ -34,9 +41,10 @@ namespace WordToCodeConverter {
                 }
             }
 
+
             currentPosition += command.second;
 
-            if (command.first != CommandService::Command::label) {
+            if (command.first != CommandService::Command::label && command.first != CommandService::Command::data) {
                 myfile << static_cast<int>(command.first);
             }
 
@@ -45,7 +53,7 @@ namespace WordToCodeConverter {
                     auto pushPopString = CommandService::extractWord(program + currentPosition);
                     currentPosition += pushPopString.second;
 
-                    myfile << " " << "\"" << pushPopString.first << "\"";
+                    myfile << " " << data[pushPopString.first];
                     break;
                 }
                 case CommandService::Command::pop : {
@@ -59,7 +67,6 @@ namespace WordToCodeConverter {
                 }
                 case CommandService::Command::label : {
                     auto labelName = CommandService::extractWord(program + currentPosition);
-                    currentLine--;
                     break;
                 }
                 case CommandService::Command::jmp : {
@@ -74,10 +81,13 @@ namespace WordToCodeConverter {
                     myfile << " " << labels[labelName.first];
                     break;
                 }
+                case CommandService::Command::data : {
+                    skipData(program, currentPosition, data, dataVal);
+                    break;
+                }
             }
 
-            currentLine++;
-            if (command.first != CommandService::Command::label) {
+            if (command.first != CommandService::Command::label && command.first != CommandService::Command::data) {
                 myfile << std::endl;
             }
 
@@ -87,7 +97,7 @@ namespace WordToCodeConverter {
         return FAIL;
     }
 
-    std::map<std::string, int>  getLabels(char* program) {
+    std::map<std::string, int>  getLabels(char* program, std::map<std::string, int>& data, std::map<int, std::string>& dataVal) {
         std::map<std::string, int> labels;
         int currentPosition = 0;
         int currentLine = 0;
@@ -101,6 +111,7 @@ namespace WordToCodeConverter {
             }
 
             currentPosition += command.second;
+
 
             switch (command.first) {
 
@@ -131,11 +142,65 @@ namespace WordToCodeConverter {
                     currentPosition += labelName.second;
                     break;
                 }
+                case CommandService::Command::data : {
+                    skipData(program, currentPosition, data, dataVal);
+                    break;
+                }
             }
 
             currentLine++;
         }
 
         return labels;
+    }
+
+    void writeData(std::ofstream &out, std::map<std::string, int> &data, std::map<int, std::string> &dataVal) {
+        if (data.size() == 0) {
+            return;
+        }
+
+        out << static_cast<int>(CommandService::Command::data) << std::endl;
+        std::map<int, std::string> indexToString;
+
+        int maxIndex = 0;
+        for(auto& kv: data) {
+            indexToString[kv.second] = kv.first;
+            maxIndex = std::max(kv.second, maxIndex);
+        }
+
+        for (int i = 1; i <= maxIndex; i++) {
+            out << i << " \""  << dataVal[i] << "\"" << std::endl;
+        }
+
+
+    }
+
+    void skipData(char *program, int &currentPosition, std::map<std::string, int> &data, std::map<int, std::string> &dataVal) {
+
+        bool toAddData = data.size() <= 0;
+        int count = 0;
+
+        char varName[MAX_LINE_SIZE];
+
+        for (; program[currentPosition] != '\0'; ) {
+
+            int position;
+            sscanf(program + currentPosition, "%s%n", varName, &position);
+
+            if (varName[0] != '.' || position <= 0) {
+                break;
+            }
+
+            currentPosition += position;
+
+            auto pushPopString = CommandService::extractWord(program + currentPosition);
+            currentPosition += pushPopString.second;
+
+
+            if (toAddData) {
+                data[std::string(varName)] = ++count;
+                dataVal[count] = pushPopString.first;
+            }
+        }
     }
 }

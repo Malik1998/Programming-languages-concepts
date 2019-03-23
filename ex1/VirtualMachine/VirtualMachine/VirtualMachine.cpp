@@ -45,6 +45,8 @@ void Processor::execute() {
         return;
     }
 
+    getDataPlace();
+
     int count_line = 0;
     for (int i = 4; i < sizeOfProgram; ) {
         auto command = extractCommandByte(programm + i);
@@ -139,13 +141,8 @@ count_line++;
                 break;
             }
             case CommandService::Command::print : {
-                int length = getNumber(programm + i);
+                printString(&i);
                 i += 4;
-                auto echoCommand = CommandService::extractWord(programm + i, length);
-                i += echoCommand.second;
-
-                cout << echoCommand.first << std::endl;
-
                 break;
             }
             case CommandService::Command::sub : {
@@ -228,6 +225,10 @@ count_line++;
                 auto b = stackOfCalls.getFrontUnsafe();
                 stackOfCalls.pop();
                 i = b;
+                break;
+            }
+            case CommandService::Command::data : {
+                skipData(i);
             }
         }
 
@@ -284,6 +285,102 @@ void Processor::conditionalJump(int *i, CommandService::Command command) {
     }
 }
 
+void Processor::printString(int *i) {
+    auto number = getNumber(programm + *i);
+
+    cout << (programm + number + dataPlace) << std::endl;
+}
+
+void Processor::getDataPlace() {
+
+    int count_line = 0;
+    for (int i = 4; i < sizeOfProgram; ) {
+        auto command = extractCommandByte(programm + i);
+        i += command.second;
+        count_line++;
+        if (command.first == CommandService::Command::end ||
+            command.first == CommandService::Command::no_such_command) {
+            return;
+        }
+        switch (command.first) {
+            case CommandService::Command::push : {
+                int length = getNumber(programm + i);
+                i += 4;
+                auto typeOfMemory = CommandService::getTypeOfMemory(programm + i);
+                i += typeOfMemory.second;
+
+                switch (typeOfMemory.first) {
+                    case RAM: {
+                        int number = getNumberChar(programm + i, length - 2);
+                        i = i - typeOfMemory.second + length;
+                        break;
+                    }
+                    case STACK: {
+                        getNumberChar(programm + i, length);
+                        i += length;
+                        break;
+                    }
+                }
+                break;
+            }
+            case CommandService::Command::pop : {
+                int length = getNumber(programm + i);
+                i += 4;
+                auto typeOfMemory = CommandService::getTypeOfMemory(programm + i);
+                i += typeOfMemory.second;
+                switch (typeOfMemory.first) {
+                    case RAM: {
+                        getNumberChar(programm + i, length - 2);
+                        i = i - typeOfMemory.second + length;
+                        break;
+                    }
+
+                }
+                break;
+            }
+            case CommandService::Command::data : {
+                dataPlace = i;
+                return;
+            }
+            case CommandService::Command::print: {
+
+            }
+            case CommandService::Command::jmp : {
+            }
+            case CommandService::Command::ja : {
+            }
+            case CommandService::Command::je : {
+                i += 4;
+                break;
+            }
+            case CommandService::Command::call : {
+                i += 4;
+                break;
+            }
+            case CommandService::Command::ret : {
+            }
+        }
+
+    }
+}
+
+void Processor::skipData(int &i) {
+
+    for (; programm[i] != '\0'; ) {
+
+        if (programm[i] == '.') {
+            break;
+        }
+
+
+        auto pushPopString = CommandService::extractWordByte(programm + i, additionalStack);
+        i += pushPopString;
+
+
+        i++;
+    }
+    i += 1;
+}
 
 //ProcessorTest::ProcessorTest(std::istream &in, ProcessorTest::TypeOfProgram typeOfProgram): stack(-1) {
 //
